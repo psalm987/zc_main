@@ -14,10 +14,16 @@ import SingleRoom from "./SingleRoom";
 import Category from "./Category";
 import Starred from "./Starred";
 
+import {
+  storeSideBarInfo,
+  retrieveSideBarInfo
+} from "../../../../utils/cache-sidebar";
+
 const categories = [];
 
 const Sidebar = props => {
   let currentWorkspace = localStorage.getItem("currentWorkspace");
+
   const { t } = useTranslation();
 
   const [nullValue, setnullValue] = useState(0);
@@ -25,6 +31,25 @@ const Sidebar = props => {
   useEffect(() => {
     setnullValue(1);
   }, []);
+
+  // Update the local storage sidebar information anytime there's a change
+  useEffect(() => {
+    if (
+      props.state.user?.user?.email &&
+      props.state.sidebar &&
+      props.state.organization_info
+    ) {
+      storeSideBarInfo(props.state.user?.user?.email, {
+        sidebar: props.state.sidebar,
+        organization_info: props.state.organization_info
+      });
+    }
+  }, [
+    props.state.user?.user?.email,
+    props.state.sidebar,
+    props.state.organization_info,
+    storeSideBarInfo
+  ]);
 
   {
     //Listening for sidebar update
